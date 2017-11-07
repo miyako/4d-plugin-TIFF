@@ -1,2 +1,2 @@
 # 4d-plugin-multi-page-images
-Utility for GIF, TIFF, PDF
+Basic tool for GIF, TIFF, PDF
