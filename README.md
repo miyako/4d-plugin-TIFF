@@ -13,6 +13,16 @@ Basic tool for GIF, TIFF, PDF
 
 [``libgd``](https://github.com/libgd/libgd) and [``libtiff``](http://www.simplesystems.org/libtiff/) for ``GIF`` and ``TIFF``. [``libgs``](https://ghostscript.com/) for ``PDF``.
 
+* libraries
+
+``LIBTIFF 4.0.8``
+``IJG LIBJPEG 9b``
+``LIBZ 1.2.11``
+
+``libz`` is C implementation on Windows, not ASM.
+
+``liblzma`` is linked on macOS.
+
 ---
 
 ## Syntax
