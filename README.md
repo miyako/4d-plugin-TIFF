@@ -18,10 +18,7 @@ Basic tool for GIF, TIFF, PDF
 ``LIBTIFF 4.0.8``
 ``IJG LIBJPEG 9b``
 ``LIBZ 1.2.11``
-
-``libz`` is C implementation on Windows, not ASM.
-
-``liblzma`` is linked on macOS.
+``LIBLZMA 5.0.3`` (mac only)
 
 ---
 
