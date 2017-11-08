@@ -18,7 +18,7 @@ Basic tool for GIF, TIFF, PDF
 ## Syntax
 
 ```
-count:=IMAGE Count pages (image)
+count:=TIFF Count pages (image)
 ```
 
 param|type|description
@@ -27,7 +27,7 @@ image|PICTURE|``GIF``, ``TIFF`` or ``PDF``
 count|LONGINT|number of images
 
 ```
-IMAGE GET PAGES (image;images{;start{;end}})
+TIFF GET PAGES (image;images{;start{;end}})
 ```
 
 param|type|description
