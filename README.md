@@ -23,7 +23,7 @@ count:=TIFF Count pages (image)
 
 param|type|description
 ------------|------|----
-image|PICTURE|``GIF``, ``TIFF`` or ``PDF``
+image|PICTURE|
 count|LONGINT|number of images
 
 ```
@@ -32,9 +32,16 @@ TIFF GET PAGES (image;images{;start{;end}})
 
 param|type|description
 ------------|------|----
-image|PICTURE|``GIF``, ``TIFF`` or ``PDF``
+image|PICTURE|
 images|ARRAY PICTURE|images
 start|LONGINT|``1`` is first page. negative number means offset from last page
 end|LONGINT|negative number means offset from last page
 
+```
+image:=TIFF Create from array (images)
+```
 
+param|type|description
+------------|------|----
+image|PICTURE|
+images|ARRAY PICTURE|images
