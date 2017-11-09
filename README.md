@@ -20,6 +20,10 @@ Basic tool for GIF, TIFF, PDF
 ``LIBZ 1.2.11``
 ``LIBLZMA 5.0.3`` (mac only)
 
+**Developent Ongoing
+
+only ``TIFF`` functions are implemented.
+
 ---
 
 ## Syntax
