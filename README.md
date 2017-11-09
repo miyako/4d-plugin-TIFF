@@ -20,7 +20,7 @@ Basic tool for GIF, TIFF, PDF
 ``LIBZ 1.2.11``
 ``LIBLZMA 5.0.3`` (mac only)
 
-Currently **Beta**
+currently **beta**
 
 only ``TIFF`` functions are implemented.
 
@@ -54,8 +54,8 @@ image:=TIFF Create from array (images)
 
 param|type|description
 ------------|------|----
-image|PICTURE|can be composite image, but should contain ``TIFF``
-images|ARRAY PICTURE|images
+images|ARRAY PICTURE|can be composite image, but should contain ``TIFF``
+image|PICTURE|merged ``TIFF``
 
 ## Examples
 
