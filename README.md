@@ -5,7 +5,7 @@ Basic tool for GIF, TIFF, PDF
 
 | carbon | cocoa | win32 | win64 |
 |:------:|:-----:|:---------:|:---------:|
-|||||
+|<img src="https://cloud.githubusercontent.com/assets/1725068/22371562/1b091f0a-e4db-11e6-8458-8653954a7cce.png" width="24" height="24" />|<img src="https://cloud.githubusercontent.com/assets/1725068/22371562/1b091f0a-e4db-11e6-8458-8653954a7cce.png" width="24" height="24" />|||
 
 ### Version
 
@@ -30,7 +30,7 @@ count:=TIFF Count pages (image)
 
 param|type|description
 ------------|------|----
-image|PICTURE|
+image|PICTURE|can be composite image, but should contain ``TIFF``
 count|LONGINT|number of images
 
 ```
@@ -39,7 +39,7 @@ TIFF GET PAGES (image;images{;start{;end}})
 
 param|type|description
 ------------|------|----
-image|PICTURE|
+image|PICTURE|can be composite image, but should contain ``TIFF``
 images|ARRAY PICTURE|images
 start|LONGINT|``1`` is first page. negative number means offset from last page
 end|LONGINT|negative number means offset from last page
@@ -50,5 +50,23 @@ image:=TIFF Create from array (images)
 
 param|type|description
 ------------|------|----
-image|PICTURE|
+image|PICTURE|can be composite image, but should contain ``TIFF``
 images|ARRAY PICTURE|images
+
+## Examples
+
+```
+$path:=Get 4D folder(Current resources folder)+"10-pages.tif"
+
+READ PICTURE FILE($path;$tiff)
+
+ARRAY PICTURE($pages;0)
+
+TIFF GET PAGES ($tiff;$pages)
+
+APPEND TO ARRAY($pages;$tiff)//the 11th element has 10 pictures so the result contains 20 pages
+
+$merged:=TIFF Create from array ($pages)
+
+WRITE PICTURE FILE(System folder(Desktop)+"merged.tif";$merged)
+```
