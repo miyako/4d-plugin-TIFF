@@ -48,7 +48,7 @@ param|type|description
 image|PICTURE|can be composite image, but should contain ``TIFF``
 images|ARRAY PICTURE|images
 start|LONGINT|``1`` is first page. negative number means offset from last page
-end|LONGINT|negative number means offset from last page
+end|LONGINT|``0`` is last page. negative number means offset from last page
 
 ```
 image:=TIFF Create from array (images)
