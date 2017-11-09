@@ -9,7 +9,6 @@
  # --------------------------------------------------------------------------------*/
 
 #include "tiffio.h"
-#include "tiffio.hxx"
 
 // --- TIFF
 void TIFF_Count_pages(sLONG_PTR *pResult, PackagePtr pParams);

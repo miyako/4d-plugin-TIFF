@@ -20,7 +20,6 @@
 		D10DB6371FB2FF92000C06A2 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D10DB6331FB2FF92000C06A2 /* liblzma.a */; };
 		D10DB6381FB2FF92000C06A2 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D10DB6341FB2FF92000C06A2 /* libz.a */; };
 		D120937F13534DCC00A72CAA /* 4DPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = D120937E13534DCC00A72CAA /* 4DPlugin.h */; };
-		D12991D01FB31D8300F5199B /* libtiffxx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D12991CF1FB31D8300F5199B /* libtiffxx.a */; };
 		D130064F12F02D9700702C0E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D130064E12F02D9700702C0E /* Cocoa.framework */; };
 		D13116A91A03ACB700DE1322 /* 4DPluginAPI.c in Sources */ = {isa = PBXBuildFile; fileRef = D13116A81A03ACB700DE1322 /* 4DPluginAPI.c */; };
 		D13116AC1A03B10800DE1322 /* C_LONGINT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D13116AA1A03B10800DE1322 /* C_LONGINT.cpp */; };
@@ -135,7 +134,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D12991D01FB31D8300F5199B /* libtiffxx.a in Frameworks */,
 				D10DB6351FB2FF92000C06A2 /* libtiff.a in Frameworks */,
 				D10DB6361FB2FF92000C06A2 /* libjpeg.a in Frameworks */,
 				D10DB6371FB2FF92000C06A2 /* liblzma.a in Frameworks */,
