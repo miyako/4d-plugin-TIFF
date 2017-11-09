@@ -74,3 +74,6 @@ $merged:=TIFF Create from array ($pages)
 
 WRITE PICTURE FILE(System folder(Desktop)+"merged.tif";$merged)
 ```
+
+<img width="540" alt="2017-11-09 11 38 45" src="https://user-images.githubusercontent.com/1725068/32588526-a23cf0b6-c552-11e7-8267-a503cd53217e.png">
+
