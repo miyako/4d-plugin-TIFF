@@ -24,6 +24,8 @@ currently **beta**
 
 only ``TIFF`` functions are implemented.
 
+code based on [``tiffcp``](http://www.simplesystems.org/libtiff/man/tiffcp.1.html) and [``tiffsplit``](http://www.simplesystems.org/libtiff/man/tiffsplit.1.html).
+
 ---
 
 ## Syntax
