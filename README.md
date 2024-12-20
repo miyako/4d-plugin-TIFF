@@ -1,28 +1,11 @@
-# 4d-plugin-multi-page-images
-Basic tool for GIF, TIFF, PDF
+![version](https://img.shields.io/badge/version-20%2B-E23089)
+![platform](https://img.shields.io/static/v1?label=platform&message=mac-intel%20|%20mac-arm%20|%20win-64&color=blue)
+[![license](https://img.shields.io/github/license/miyako/4d-plugin-TIFF)](LICENSE)
+![downloads](https://img.shields.io/github/downloads/miyako/4d-plugin-TIFF/total)
 
-### Platform
+# TIFF
+Basic tool for TIFF
 
-| carbon | cocoa | win32 | win64 |
-|:------:|:-----:|:---------:|:---------:|
-|<img src="https://cloud.githubusercontent.com/assets/1725068/22371562/1b091f0a-e4db-11e6-8458-8653954a7cce.png" width="24" height="24" />|<img src="https://cloud.githubusercontent.com/assets/1725068/22371562/1b091f0a-e4db-11e6-8458-8653954a7cce.png" width="24" height="24" />|<img src="https://cloud.githubusercontent.com/assets/1725068/22371562/1b091f0a-e4db-11e6-8458-8653954a7cce.png" width="24" height="24" />|<img src="https://cloud.githubusercontent.com/assets/1725068/22371562/1b091f0a-e4db-11e6-8458-8653954a7cce.png" width="24" height="24" />|
-
-### Version
-
-<img src="https://cloud.githubusercontent.com/assets/1725068/18940649/21945000-8645-11e6-86ed-4a0f800e5a73.png" width="32" height="32" /> <img src="https://cloud.githubusercontent.com/assets/1725068/18940648/2192ddba-8645-11e6-864d-6d5692d55717.png" width="32" height="32" />
-
-[``libgd``](https://github.com/libgd/libgd) and [``libtiff``](http://www.simplesystems.org/libtiff/) for ``GIF`` and ``TIFF``. [``libgs``](https://ghostscript.com/) for ``PDF``.
-
-* libraries
-
-``LIBTIFF 4.0.8``
-``IJG LIBJPEG 9b``
-``LIBZ 1.2.11``
-``LIBLZMA 5.0.3`` (mac only)
-
-currently **beta**
-
-only ``TIFF`` functions are implemented.
 
 code based on [``tiffcp``](http://www.simplesystems.org/libtiff/man/tiffcp.1.html) and [``tiffsplit``](http://www.simplesystems.org/libtiff/man/tiffsplit.1.html).
 
@@ -30,7 +13,7 @@ code based on [``tiffcp``](http://www.simplesystems.org/libtiff/man/tiffcp.1.htm
 
 ## Syntax
 
-```
+```4d
 count:=TIFF Count pages (image)
 ```
 
@@ -39,7 +22,7 @@ param|type|description
 image|PICTURE|can be composite image, but should contain ``TIFF``
 count|LONGINT|number of images
 
-```
+```4d
 TIFF GET PAGES (image;images{;start{;end}})
 ```
 
@@ -50,7 +33,7 @@ images|ARRAY PICTURE|images
 start|LONGINT|``1`` is first page. negative number means offset from last page
 end|LONGINT|``0`` is last page. negative number means offset from last page
 
-```
+```4d
 image:=TIFF Create from array (images)
 ```
 
@@ -61,7 +44,7 @@ image|PICTURE|merged ``TIFF``
 
 ## Examples
 
-```
+```4d
 $path:=Get 4D folder(Current resources folder)+"10-pages.tif"
 
 READ PICTURE FILE($path;$tiff)
@@ -78,4 +61,3 @@ WRITE PICTURE FILE(System folder(Desktop)+"merged.tif";$merged)
 ```
 
 <img width="540" alt="2017-11-09 11 38 45" src="https://user-images.githubusercontent.com/1725068/32588526-a23cf0b6-c552-11e7-8267-a503cd53217e.png">
-

@@ -1,0 +1,21 @@
+﻿{
+	"name": "TIFF",
+	"id": 20000,
+	"commands": [
+		{
+			"theme": "TIFF",
+			"syntax": "TIFF Count pages(&P):L",
+			"threadSafe": true
+		},
+		{
+			"theme": "TIFF",
+			"syntax": "TIFF GET PAGES(&P;&Y;&L;&L)",
+			"threadSafe": true
+		},
+		{
+			"theme": "TIFF",
+			"syntax": "TIFF Create from array(&Y):P",
+			"threadSafe": true
+		}
+	]
+}
