@@ -1,5 +1,6 @@
-
 TIFF/test/Plugins/TIFF.bundle/Contents/Windows64/TIFF.lib
 TIFF/test/Plugins/TIFF.bundle/Contents/Windows64/TIFF.exp
 TIFF/Objs/*
 TIFF/.vs/*
+TIFF/build/*
+TIFF/test/userPreferences.*
