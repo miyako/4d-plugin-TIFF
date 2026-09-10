@@ -108,9 +108,17 @@ static tsize_t tiff_Read(thandle_t h, tdata_t buf, tsize_t size) {
     
     tiff_src *tiff_input = (tiff_src *)h;
     
+    //pos can be pushed out of [0,len] by a malformed/malicious TIFF's offsets
+    //via tiff_ReadSeek; treat any out-of-range pos as "nothing left to read"
+    //rather than letting a negative 'remaining' turn into a huge memcpy length.
+    if(tiff_input->pos < 0 || tiff_input->pos >= tiff_input->len)
+    {
+        return (tsize_t)0;
+    }
+    
     tsize_t remaining = tiff_input->len - tiff_input->pos;
     PA_long32 len = size > remaining ? remaining : size;
-    if(len)
+    if(len > 0)
     {
         uint8_t *ptr = tiff_input->ptr + tiff_input->pos;
         memcpy(buf, ptr, len);
@@ -123,19 +131,27 @@ static tsize_t tiff_Read(thandle_t h, tdata_t buf, tsize_t size) {
 static toff_t tiff_ReadSeek(thandle_t h, toff_t pos, int whence) {
     
     tiff_src *tiff_input = (tiff_src *)h;
+    PA_long32 newPos = tiff_input->pos;
     
     switch (whence)
     {
   case SEEK_SET:
-            tiff_input->pos = pos;
+            newPos = (PA_long32)pos;
             break;
   case SEEK_CUR:
-            tiff_input->pos += pos;
+            newPos = tiff_input->pos + (PA_long32)pos;
             break;
   case SEEK_END:
-            tiff_input->pos = tiff_input->len + (pos > 0 ? 0 : pos);
+            newPos = tiff_input->len + (pos > 0 ? 0 : (PA_long32)pos);
             break;
     }
+    
+    //clamp to [0, len] so a corrupt/adversarial TIFF's offsets can never
+    //push pos out of range of the buffer tiff_Read/tiff_Write operate on
+    if(newPos < 0) newPos = 0;
+    if(newPos > tiff_input->len) newPos = tiff_input->len;
+    
+    tiff_input->pos = newPos;
     
     return tiff_input->pos;
 };
@@ -155,7 +171,15 @@ static tsize_t tiff_Write(thandle_t h, tdata_t bytes, tsize_t size) {
     
     std::vector<uint8_t> *buf = tiff_output->buf;
     
-    uint32_t len = buf->size();
+    //nothing to do for a zero-length write; buf->at(pos) below would throw
+    //std::out_of_range for pos == buf->size(), and that exception would then
+    //unwind through libtiff's plain-C call stack.
+    if(size <= 0 || tiff_output->pos < 0)
+    {
+        return (tsize_t)0;
+    }
+    
+    uint32_t len = (uint32_t)buf->size();
 
     tsize_t need = tiff_output->pos + size;
     
@@ -164,7 +188,7 @@ static tsize_t tiff_Write(thandle_t h, tdata_t bytes, tsize_t size) {
         buf->resize(need);
     }
     
-    uint8_t *ptr = (uint8_t *)&buf->at(tiff_output->pos);
+    uint8_t *ptr = buf->data() + tiff_output->pos;
     memcpy(ptr, bytes, size);
     
     return (tsize_t)size;
@@ -173,19 +197,27 @@ static tsize_t tiff_Write(thandle_t h, tdata_t bytes, tsize_t size) {
 static toff_t tiff_WriteSeek(thandle_t h, toff_t pos, int whence) {
     
     tiff_dst *tiff_output = (tiff_dst *)h;
+    PA_long32 newPos = tiff_output->pos;
+    PA_long32 bufLen = (PA_long32)tiff_output->buf->size();
     
     switch (whence)
     {
   case SEEK_SET:
-            tiff_output->pos = pos;
+            newPos = (PA_long32)pos;
             break;
   case SEEK_CUR:
-            tiff_output->pos += pos;
+            newPos = tiff_output->pos + (PA_long32)pos;
             break;
   case SEEK_END:
-            tiff_output->pos = tiff_output->buf->size() + (pos > 0 ? 0 : pos);
+            newPos = bufLen + (pos > 0 ? 0 : (PA_long32)pos);
             break;
     }
+    
+    //clamp so tiff_Write/tiff_WriteRead never see a pos outside the current buffer
+    if(newPos < 0) newPos = 0;
+    if(newPos > bufLen) newPos = bufLen;
+    
+    tiff_output->pos = newPos;
     
     return tiff_output->pos;
 };
@@ -200,13 +232,19 @@ static toff_t tiff_WriteSize(thandle_t h)
 static tsize_t tiff_WriteRead(thandle_t h, tdata_t buf, tsize_t size) {
     
     tiff_dst *tiff_output = (tiff_dst *)h;
+    PA_long32 bufLen = (PA_long32)tiff_output->buf->size();
     
-    tsize_t remaining = tiff_output->buf->size() - tiff_output->pos;
+    if(tiff_output->pos < 0 || tiff_output->pos >= bufLen)
+    {
+        return (tsize_t)0;
+    }
+    
+    tsize_t remaining = bufLen - tiff_output->pos;
     PA_long32 len = size > remaining ? remaining : size;
     
-    if(len)
+    if(len > 0)
     {
-        uint8_t *ptr = (uint8_t *)(&tiff_output->buf->at(tiff_output->pos));
+        uint8_t *ptr = tiff_output->buf->data() + tiff_output->pos;
         memcpy(buf, ptr, len);
         tiff_output->pos += len;
     }
@@ -1977,15 +2015,18 @@ static void TIFF_GET_PAGES(PA_PluginParameters params) {
                                                                                 tiff_Unmap);
                         if(page)
                         {
-                            tiffcp(tiff, page);
+                            int copyOK = tiffcp(tiff, page);
 
                             TIFFClose(page);
                             
                             //->$2
-                            if(Param2.fType == eVK_ArrayPicture)
+                            //only hand back pages that actually copied; a failed
+                            //tiffcp left 'buf' partial/empty, and appending it
+                            //anyway would silently return corrupt image data
+                            if(copyOK && !buf.empty() && Param2.fType == eVK_ArrayPicture)
                             {
                                 //append to array
-                                PA_Picture picture = PA_CreatePicture((void *)&buf[0], buf.size());
+                                PA_Picture picture = PA_CreatePicture((void *)buf.data(), buf.size());
                                 PA_long32 count = PA_GetArrayNbElements(Param2);
                                 count++;
                                 PA_ResizeArray(&Param2, count);
@@ -2080,8 +2121,13 @@ static void TIFF_Create_from_array(PA_PluginParameters params) {
                                 {
                                     TIFFSetDirectory(tiff, dir);
                                     
-                                    tiffcpy(tiff, result);
-                                    TIFFWriteDirectory(result);
+                                    //only write a directory for pages that actually
+                                    //copied; a failed tiffcpy would otherwise still
+                                    //get committed to the merged output
+                                    if(tiffcpy(tiff, result))
+                                    {
+                                        TIFFWriteDirectory(result);
+                                    }
 
                                 }
                                 TIFFClose(tiff);
@@ -2096,11 +2142,25 @@ static void TIFF_Create_from_array(PA_PluginParameters params) {
             
             //$0
             TIFFClose(result);
-            PA_Picture picture = PA_CreatePicture((void *)&buf[0], buf.size());
+            PA_Picture picture = PA_CreatePicture((void *)buf.data(), buf.size());
             PA_ReturnPicture(params, picture);
         }//result
+        else
+        {
+            //TIFFClientOpen failed: still must return, since this command
+            //declares a return type (:P) - an empty picture beats a hang
+            PA_Picture picture = PA_CreatePicture(NULL, 0);
+            PA_ReturnPicture(params, picture);
+        }
 
     }//eVK_ArrayPicture
+    else
+    {
+        //wrong parameter type: still must return, since this command
+        //declares a return type (:P) - an empty picture beats a hang
+        PA_Picture picture = PA_CreatePicture(NULL, 0);
+        PA_ReturnPicture(params, picture);
+    }
 
 }
 
